@@ -1,0 +1,35 @@
+# Part C
+import numpy as np
+from scipy.integrate import solve_bvp
+import matplotlib.pyplot as plt
+
+def fun(x, y):
+    epsilon = 1e-10  # small positive value to avoid logarithm of zero
+    return np.vstack((y[1], -1 * (2 * y[1] ** 3 + y[0] ** 2 * y[1] ) * np.cos(x) ** (-1) + epsilon))
+
+def bc(ya, yb):
+    return np.array([ya[0] - 2**(-1/4), yb[0] - 12**(1/4)/2 ])
+
+x = np.linspace(np.pi/4, np.pi/3, 100)
+y_guess = np.zeros((2, x.size))  # initial guess for y and y'
+y_guess[0] = 0  # initial guess for y
+y_guess[1] = 0  # initial guess for y'
+
+sol = solve_bvp(fun, bc, x, y_guess)
+
+# Plot the numerical solution
+plt.plot(sol.x, sol.y[0], label='Numerical Solution', color='green')
+
+# analytical solution
+test_x = np.linspace(np.pi/4, np.pi/3, 100)
+test_y = np.sqrt(np.sin(test_x))
+
+plt.plot(test_x, test_y, 'r',  label='Analytical Solution')
+plt.scatter([np.pi/4, np.pi/3], [2**(-1/4), 12**(1/4)/2], label='Boundary Conditions')
+plt.xlabel('x')
+plt.ylabel('y')
+
+plt.title('Problem 9_C')
+plt.legend()
+plt.grid(True)
+plt.show()
